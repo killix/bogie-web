@@ -1,26 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import StyleSheet from 'react-style';
+import Relay from 'react-relay';
 
-const styles = StyleSheet.create({
-    foo: {
-        color: 'red',
-        backgroundColor: 'white'
-    }
-});
-
-class HelloWorld extends React.Component {
-    render() {
-        console.log(styles.foo);
-        return <div styles={[styles.foo]}>
-            Hello, world!
-        </div>;
-    }
-}
+import TrainList from './components/trainList';
+import ListRoute from './routes/listRoute';
 
 if (typeof window !== 'undefined') {
+    Relay.injectNetworkLayer(
+        new Relay.DefaultNetworkLayer('http://192.168.1.16:5000/graphql')
+    );
+
     ReactDOM.render(
-        <HelloWorld color="black" />,
+        <Relay.RootContainer Component={TrainList} route={new ListRoute()} />,
         document.querySelector('main')
     );
 }

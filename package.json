@@ -1,51 +1,59 @@
 {
-  "name": "bogie-web",
-  "version": "0.0.1",
-  "description": "The web client for Bogie",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "webpack",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sup3bsc/bogie-web.git"
-  },
-  "keywords": [
-    "Web",
-    "Client"
-  ],
-  "author": "Sup3 Bsc",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/sup3bsc/bogie-web/issues"
-  },
-  "homepage": "https://github.com/sup3bsc/bogie-web#readme",
-  "xo": {
-    "esnext": true,
-    "envs": ["browser", "commonjs"],
-    "space": 4,
-    "rules": {
-      "linebreak-style": [
-        2,
-        "windows"
-      ]
+    "name": "bogie-web",
+    "version": "0.0.1",
+    "description": "The web client for Bogie",
+    "main": "src/main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prepublish": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sup3bsc/bogie-web.git"
+    },
+    "keywords": [
+        "Web",
+        "Client"
+    ],
+    "author": "Sup3 Bsc",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/sup3bsc/bogie-web/issues"
+    },
+    "homepage": "https://github.com/sup3bsc/bogie-web#readme",
+    "xo": {
+        "esnext": true,
+        "envs": [
+            "browser",
+            "commonjs"
+        ],
+        "plugins": [
+            "react"
+        ],
+        "space": 4,
+        "rules": {
+            "linebreak-style": [
+                2,
+                "windows"
+            ]
+        }
+    },
+    "devDependencies": {
+        "babel-core": "^6.3.17",
+        "babel-loader": "^6.2.0",
+        "babel-plugin-transform-class-properties": "^6.3.13",
+        "babel-preset-es2015": "^6.3.13",
+        "babel-preset-react": "^6.3.13",
+        "extract-text-webpack-plugin": "^0.3.8",
+        "react-style-webpack-plugin": "^0.4.0",
+        "webpack": "^1.12.9"
+    },
+    "dependencies": {
+        "babel-relay-plugin": "^0.6.0",
+        "fbjs": "^0.4.0",
+        "react": "^0.14.3",
+        "react-dom": "^0.14.3",
+        "react-relay": "^0.6.0",
+        "react-style": "js-next/react-style#0.14"
     }
-  },
-  "devDependencies": {
-    "babel-core": "^6.3.17",
-    "babel-loader": "^6.2.0",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "extract-text-webpack-plugin": "^0.3.8",
-    "react-style-webpack-plugin": "^0.4.0",
-    "webpack": "^1.12.9"
-  },
-  "dependencies": {
-    "fbjs": "^0.4.0",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-style": "js-next/react-style#0.14"
-  }
 }
