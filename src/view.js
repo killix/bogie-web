@@ -7,7 +7,7 @@ import TrainList from './components/trainList';
 import ListRoute from './routes/listRoute';
 
 Relay.injectNetworkLayer(
-    new Relay.DefaultNetworkLayer('http://192.168.1.16:5000/graphql')
+    new Relay.DefaultNetworkLayer(`${process.env.BACKEND_URL}/graphql`)
 );
 
 const rootContainerProps = {

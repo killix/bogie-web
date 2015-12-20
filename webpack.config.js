@@ -21,8 +21,10 @@ module.exports = {
     plugins: [
         // HACK: Evite a ReactStylePlugin de crasher
         new webpack.DefinePlugin({
-            self: '{fetch: function() {}}'
+            'self': '{fetch: function() {}}',
+            'process.env.BACKEND_URL': process.env.BACKEND_URL
         }),
-        new ReactStylePlugin('bundle.css')
+        new ReactStylePlugin('bundle.css'),
+        new webpack.optimize.UglifyJsPlugin()
     ]
 };

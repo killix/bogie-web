@@ -13,13 +13,13 @@ app.get('/', (req, res) => {
     renderView().then(params => {
         res.send(
             templates.root(Object.assign({
-                cdn: 'http://192.168.1.16:8080'
+                cdn: process.env.CDN_URL
             }, params))
         );
     });
 });
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);
 });
