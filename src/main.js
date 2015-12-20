@@ -1,17 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Relay from 'react-relay';
+import express from 'express';
+import path from 'path';
+import dot from 'dot';
+import renderView from './view';
 
-import TrainList from './components/trainList';
-import ListRoute from './routes/listRoute';
+const templates = dot.process({
+    path: path.join(__dirname, '..', 'views')
+});
 
-if (typeof window !== 'undefined') {
-    Relay.injectNetworkLayer(
-        new Relay.DefaultNetworkLayer('http://192.168.1.16:5000/graphql')
-    );
+const app = express();
 
-    ReactDOM.render(
-        <Relay.RootContainer Component={TrainList} route={new ListRoute()} />,
-        document.querySelector('main')
-    );
-}
+app.get('/', (req, res) => {
+    renderView().then(params => {
+        res.send(
+            templates.root(Object.assign({
+                cdn: 'http://192.168.1.16:8080'
+            }, params))
+        );
+    });
+});
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}...`);
+});

@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     element: {
         backgroundColor: 'white'
     }
-});
+}, 'train_styles', true);
 
 class TrainList extends React.Component {
     render() {

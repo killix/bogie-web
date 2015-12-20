@@ -1,9 +1,11 @@
-var ReactStylePlugin = require('react-style-webpack-plugin');
+var path = require('path'),
+    webpack = require('webpack'),
+    ReactStylePlugin = require('react-style-webpack-plugin');
 
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/view.js',
     output: {
-        path: __dirname,
+        path: path.join(__dirname, 'dist', 'assets'),
         filename: 'bundle.js'
     },
     module: {
@@ -17,6 +19,10 @@ module.exports = {
         }]
     },
     plugins: [
+        // HACK: Evite a ReactStylePlugin de crasher
+        new webpack.DefinePlugin({
+            self: '{fetch: function() {}}'
+        }),
         new ReactStylePlugin('bundle.css')
     ]
 };
