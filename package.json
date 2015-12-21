@@ -2,12 +2,12 @@
     "name": "bogie-web",
     "version": "0.0.1",
     "description": "The web client for Bogie",
-    "main": "dist/main.js",
+    "main": "dist/server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "postinstall": "./node_modules/.bin/babel src/ --out-dir dist/",
         "build-assets": "webpack",
-        "start": "node dist/main.js"
+        "start": "node dist/server.js"
     },
     "repository": {
         "type": "git",
@@ -56,11 +56,13 @@
         "dot": "^1.0.3",
         "express": "^4.13.3",
         "fbjs": "^0.4.0",
+        "history": "^1.13.1",
         "isomorphic-fetch": "^2.2.0",
         "isomorphic-relay": "^0.4.0",
         "react": "^0.14.3",
         "react-dom": "^0.14.3",
         "react-relay": "^0.6.0",
+        "react-router": "^1.0.2",
         "react-style": "js-next/react-style#0.14"
     }
 }

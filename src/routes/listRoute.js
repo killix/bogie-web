@@ -1,6 +1,11 @@
+import React from 'react';
+
+import IsomorphicRelay from 'isomorphic-relay';
 import Relay from 'react-relay';
 
-export default class ListRoute extends Relay.Route {
+import TrainList from '../components/trainList';
+
+class ListRoute extends Relay.Route {
     static routeName = 'ListRoute';
     static queries = {
         trains: Component => Relay.QL`
@@ -11,4 +16,15 @@ export default class ListRoute extends Relay.Route {
             }
         `
     };
+}
+
+export default class ListContainer extends React.Component {
+    static containerProps = {
+        Component: TrainList,
+        route: new ListRoute()
+    };
+
+    render() {
+        return <IsomorphicRelay.RootContainer {...ListContainer.containerProps} />;
+    }
 }

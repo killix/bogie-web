@@ -3,7 +3,7 @@ var path = require('path'),
     ReactStylePlugin = require('react-style-webpack-plugin');
 
 module.exports = {
-    entry: './src/view.js',
+    entry: './src/client.js',
     output: {
         path: path.join(__dirname, 'dist', 'assets'),
         filename: 'bundle.js'
