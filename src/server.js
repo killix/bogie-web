@@ -1,68 +1,70 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import {
-    match,
-    RoutingContext
-} from 'react-router';
-
-import IsomorphicRelay from 'isomorphic-relay';
-import Relay from 'react-relay';
-import RelayStoreData from 'react-relay/lib/RelayStoreData';
-
-import router from './router';
-
-Relay.injectNetworkLayer(
-    new Relay.DefaultNetworkLayer(`${process.env.BACKEND_URL}/graphql`)
-);
-
-RelayStoreData.getDefaultInstance().getChangeEmitter().injectBatchingStrategy(() => {
-    // NOOP
-});
+import relay from './relay';
 
 const app = express();
 
-app.use((req, res) => {
-    match({
-        location: req.url,
-        routes: router
-    }, (error, redirectLocation, renderProps) => {
-        if (error) {
-            res.status(500).send(error.message);
-        } else if (redirectLocation) {
-            res.redirect(302,
-                redirectLocation.pathname + redirectLocation.search
-            );
-        } else if (renderProps) {
-            const {containerProps} = renderProps.components.find(
-                component => component && component.containerProps
-            );
+if (process.env.NODE_ENV !== 'production') {
+    const morgan = require('morgan');
+    app.use(morgan('dev'));
+}
 
-            IsomorphicRelay.prepareData(containerProps).then(data => {
-                const reactOutput = ReactDOMServer.renderToString(
-                    <RoutingContext {...renderProps} />
-                );
+app.get('/login', (req, res) => {
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Bogie</title>
+            </head>
+            <body>
+                <form method="POST" action="/login">
+                    <input type="text" name="username" placeholder="Username"/>
+                    <input type="password" name="password" placeholder="Password"/>
+                    <button type="submit">Log In</button>
+                </form>
+            </body>
+        </html>
+    `);
+});
 
-                res.status(200).send(`
-                    <!DOCTYPE html>
-                    <html>
-                        <head>
-                            <meta charset="utf-8">
-                            <title>RailCommander</title>
-                            <link rel="stylesheet" href="${process.env.CDN_URL}/bundle.css">
-                        </head>
-                        <body>
-                             <main>${reactOutput}</main>
-                             <script id="preloadedData" type="application/json">${JSON.stringify(data)}</script>
-                             <script src="${process.env.CDN_URL}/bundle.js"></script>
-                        </body>
-                    </html>
-                `);
-            });
-        } else {
-            res.status(404).send('Not found');
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.get('/', relay);
+
+app.post('/login', (req, res) => {
+    const {username, password} = req.body;
+    console.log(username, password);
+
+    fetch(`${process.env.BACKEND_URL}/auth/token`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${new Buffer('5682d6ffd06684dc1fd22cfd:everybody').toString('base64')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            client_id: '5682d6ffd06684dc1fd22cfd',
+            client_secret: 'everybody',
+            grant_type: 'password',
+            username, password
+        })
+    }).then(res => {
+        if (res.ok) {
+            return res.json();
         }
+
+        throw new Error(`${res.status} ${res.statusText}`);
+    }).then(({access_token}) => {
+        res.cookie('token', access_token);
+        res.redirect('/');
+    }).catch(err => {
+        console.error(err.stack);
+        res.status(500).send(err.message);
     });
 });
 

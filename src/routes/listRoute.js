@@ -16,15 +16,21 @@ class ListRoute extends Relay.Route {
             }
         `
     };
+    static paramDefinitions = {
+        token: {required: true}
+    };
 }
 
 export default class ListContainer extends React.Component {
     static containerProps = {
         Component: TrainList,
-        route: new ListRoute()
+        RouteClass: ListRoute
     };
 
     render() {
-        return <IsomorphicRelay.RootContainer {...ListContainer.containerProps} />;
+        const {Component, RouteClass} = ListContainer.containerProps;
+        return <IsomorphicRelay.RootContainer Component={Component} route={new RouteClass({
+            token: this.props.location.state.token
+        })} />;
     }
 }

@@ -1,20 +1,19 @@
 import React from 'react';
 import Relay from 'react-relay';
-import StyleSheet from 'react-style';
 
 import Train from './train';
 
-const styles = StyleSheet.create({
+const styles = cssInJS({
     list: {
         backgroundColor: 'white'
     }
-}, 'trainList_styles', true);
+});
 
 class TrainList extends React.Component {
     render() {
-        return <ul styles={styles.list}>
+        return <div className={`ui relaxed divided list ${styles.list}`}>
             {this.props.trains.edges.map(edge => <Train key={edge.node.id} train={edge.node} />)}
-        </ul>;
+        </div>;
     }
 }
 

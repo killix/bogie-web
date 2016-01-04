@@ -1,18 +1,17 @@
 import React from 'react';
 import Relay from 'react-relay';
-import StyleSheet from 'react-style';
 
-const styles = StyleSheet.create({
+const styles = cssInJS({
     element: {
         backgroundColor: 'white'
     }
-}, 'train_styles', true);
+});
 
 class TrainList extends React.Component {
     render() {
-        return <li styles={styles.element}>
-            {this.props.train.departure.name} -> {this.props.train.arrival.name}
-        </li>;
+        return <div className={`content ${styles.element}`}>
+            {this.props.train.departure.name} &rarr; {this.props.train.arrival.name}
+        </div>;
     }
 }
 
