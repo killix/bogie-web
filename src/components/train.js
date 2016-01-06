@@ -1,5 +1,6 @@
 import React from 'react';
 import Relay from 'react-relay';
+import TrainType from '../types/train';
 
 const styles = cssInJS({
     element: {
@@ -7,15 +8,21 @@ const styles = cssInJS({
     }
 });
 
-class TrainList extends React.Component {
+class Train extends React.Component {
+    static propTypes = {
+        train: TrainType
+    };
+
     render() {
-        return <div className={`content ${styles.element}`}>
-            {this.props.train.departure.name} &rarr; {this.props.train.arrival.name}
-        </div>;
+        return (
+            <div className={`content ${styles.element}`}>
+                {this.props.train.departure.name} &rarr; {this.props.train.arrival.name}
+            </div>
+        );
     }
 }
 
-export default Relay.createContainer(TrainList, {
+export default Relay.createContainer(Train, {
     fragments: {
         train: () => Relay.QL`
             fragment on Train {

@@ -4,7 +4,7 @@
     "description": "The web client for Bogie",
     "main": "dist/server.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "./node_modules/.bin/xo src/**/*.js",
         "postinstall": "./node_modules/.bin/gulp babel client --no-watch",
         "start": "node dist/server.js"
     },
@@ -28,11 +28,19 @@
             "browser",
             "commonjs"
         ],
+        "globals": [
+            "cssInJS"
+        ],
         "plugins": [
             "react"
         ],
+        "extends": [
+            "xo-react"
+        ],
         "space": 4,
         "rules": {
+            "react/jsx-closing-bracket-location": 0,
+            "camelcase": 1,
             "linebreak-style": [
                 2,
                 "windows"
@@ -76,5 +84,16 @@
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^1.1.0",
         "watchify": "^3.6.1"
-    }
+    },
+    "devDependencies": {
+        "eslint": "^1.10.3",
+        "eslint-config-xo": "^0.9.1",
+        "eslint-config-xo-react": "^0.3.0",
+        "eslint-plugin-react": "^3.14.0",
+        "pre-commit": "^1.1.2",
+        "xo": "^0.12.1"
+    },
+    "pre-commit": [
+        "lint"
+    ]
 }

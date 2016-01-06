@@ -22,6 +22,13 @@ class ListRoute extends Relay.Route {
 }
 
 export default class ListContainer extends React.Component {
+    static propTypes = {
+        location: React.PropTypes.shape({
+            state: React.PropTypes.shape({
+                token: React.PropTypes.string
+            })
+        })
+    };
     static containerProps = {
         Component: TrainList,
         RouteClass: ListRoute
@@ -29,8 +36,10 @@ export default class ListContainer extends React.Component {
 
     render() {
         const {Component, RouteClass} = ListContainer.containerProps;
-        return <IsomorphicRelay.RootContainer Component={Component} route={new RouteClass({
-            token: this.props.location.state.token
-        })} />;
+        return (
+            <IsomorphicRelay.RootContainer Component={Component} route={new RouteClass({
+                token: this.props.location.state.token
+            })} />
+        );
     }
 }
