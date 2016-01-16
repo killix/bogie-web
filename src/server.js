@@ -11,31 +11,10 @@ if (process.env.NODE_ENV !== 'production') {
     app.use(morgan('dev'));
 }
 
-app.get('/login', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Bogie</title>
-            </head>
-            <body>
-                <form method="POST" action="/login">
-                    <input type="text" name="username" placeholder="Username"/>
-                    <input type="password" name="password" placeholder="Password"/>
-                    <button type="submit">Log In</button>
-                </form>
-            </body>
-        </html>
-    `);
-});
-
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
-app.get('/', relay);
 
 app.post('/login', (req, res) => {
     const {username, password} = req.body;
@@ -67,6 +46,8 @@ app.post('/login', (req, res) => {
         res.status(500).send(err.message);
     });
 });
+
+app.use(relay);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

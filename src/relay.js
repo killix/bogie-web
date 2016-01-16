@@ -57,22 +57,39 @@ export default (req, res) => {
                 redirectLocation.pathname + redirectLocation.search
             );
         } else if (renderProps) {
-            const {
-                containerProps: {Component, RouteClass}
-            } = renderProps.components.find(
+            const relayComponent = renderProps.components.find(
                 component => component && component.containerProps
             );
 
-            IsomorphicRelay.prepareData({
-                Component,
-                route: new RouteClass({
-                    token: req.cookies.token
-                })
-            }).then(data => {
+            (() => {
+                if (relayComponent) {
+                    const {
+                        containerProps: {Component, RouteClass}
+                    } = relayComponent;
+
+                    return IsomorphicRelay.prepareData({
+                        Component,
+                        route: new RouteClass({
+                            token: req.cookies.token
+                        })
+                    }).then(data => {
+                        const reactOutput = ReactDOMServer.renderToString(
+                            <RoutingContext {...renderProps} />
+                        );
+
+                        return `
+                            <main class="ui container">${reactOutput}</main>
+                            <script id="preloadedData" type="application/json">${JSON.stringify(data)}</script>
+                        `;
+                    });
+                }
+
                 const reactOutput = ReactDOMServer.renderToString(
                     <RoutingContext {...renderProps} />
                 );
 
+                return Promise.resolve(`<main class="ui container">${reactOutput}</main>`);
+            })().then(body => {
                 res.status(200).send(`
                     <!DOCTYPE html>
                     <html>
@@ -83,8 +100,7 @@ export default (req, res) => {
                             <link rel="stylesheet" href="${process.env.CDN_URL}/bundle.css">
                         </head>
                         <body>
-                            <main class="ui container">${reactOutput}</main>
-                            <script id="preloadedData" type="application/json">${JSON.stringify(data)}</script>
+                            ${body}
                             <script src="${process.env.CDN_URL}/bundle.js"></script>
                         </body>
                     </html>
