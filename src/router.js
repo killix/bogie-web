@@ -1,22 +1,28 @@
 import React from 'react';
 import {
-    Router,
+    RelayRouter
+} from 'react-router-relay';
+import {
     Route,
     createRoutes
 } from 'react-router';
 
-import ListContainer from './routes/listRoute';
+import TrainList from './components/trainList';
+import ListQueries from './routes/listRoute';
 import LoginForm from './components/loginForm';
 import RegisterForm from './components/registerForm';
 
 export default createRoutes(
-    <Router>
-        <Route path="/" component={ListContainer} onEnter={({location: {state, query}}, replace) => {
-            if (!state.token) {
-                replace(state, '/login', query);
+    <RelayRouter>
+        <Route path="/" component={TrainList} queries={ListQueries} onEnter={({location}, replace) => {
+            if (!location.state.token) {
+                replace({
+                    ...location,
+                    pathname: '/login'
+                });
             }
-        }} />
+        }} stateParams={['token']} />
         <Route path="/login" component={LoginForm} />
         <Route path="/register" component={RegisterForm} />
-    </Router>
+    </RelayRouter>
 );

@@ -12,15 +12,17 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(cookieParser());
+
+app.get('*', relay);
+
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
 app.post('/login', (req, res) => {
     const {username, password} = req.body;
-    console.log(username, password);
 
-    fetch(`${process.env.BACKEND_URL}/auth/token`, {
+    fetch(`${process.env.BACKEND_URL}/token`, {
         method: 'POST',
         headers: {
             'Authorization': `Basic ${new Buffer('5682d6ffd06684dc1fd22cfd:everybody').toString('base64')}`,
@@ -46,8 +48,6 @@ app.post('/login', (req, res) => {
         res.status(500).send(err.message);
     });
 });
-
-app.use(relay);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

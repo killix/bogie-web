@@ -5,7 +5,7 @@
     "main": "dist/server.js",
     "scripts": {
         "lint": "./node_modules/.bin/xo src/**/*.js",
-        "postinstall": "./node_modules/.bin/gulp babel client --no-watch",
+        "postinstall": "./node_modules/.bin/gulp babel client",
         "start": "node dist/server.js"
     },
     "repository": {
@@ -69,6 +69,7 @@
         "fbjs": "^0.4.0",
         "gulp": "^3.9.0",
         "gulp-babel": "^6.1.1",
+        "gulp-changed": "^1.3.0",
         "gulp-nodemon": "^2.0.6",
         "gulp-sourcemaps": "^1.6.0",
         "gulp-uglify": "^1.5.1",
@@ -76,11 +77,13 @@
         "history": "^1.17.0",
         "isomorphic-fetch": "^2.2.0",
         "isomorphic-relay": "^0.4.0",
+        "isomorphic-relay-router": "^0.5.1",
         "morgan": "^1.6.1",
         "react": "^0.14.3",
         "react-dom": "^0.14.3",
         "react-relay": "^0.6.0",
-        "react-router": "^1.0.3",
+        "react-router": "^2.0.0-rc5",
+        "react-router-relay": "^0.9.0",
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^1.1.0",
         "watchify": "^3.6.1",

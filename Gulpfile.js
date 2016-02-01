@@ -10,6 +10,7 @@ const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
 const babelify = require('babelify');
 const nodemon = require('gulp-nodemon');
+const changed = require('gulp-changed');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync');
 
@@ -21,10 +22,10 @@ const plugins = [
     './build/babelRelayPlugin'
 ];
 
-let inst = browserify(Object.assign({
-    entries: ['./src/client.js'],
+let inst = browserify(Object.assign({}, watchify.args, {
+    entries: './src/client.js',
     debug: true
-}, watchify.args))
+}))
     .transform(babelify, {
         presets: ['es2015', 'stage-0', 'react'],
         plugins
@@ -48,7 +49,7 @@ function bundle() {
 
 gulp.task('client', bundle);
 
-if (gutil.env.watch !== false) {
+gulp.task('watch', () => {
     inst = watchify(inst, {
         delay: 100,
         ignoreWatch: ['**/node_modules/**']
@@ -56,10 +57,11 @@ if (gutil.env.watch !== false) {
 
     inst.on('update', bundle);
     inst.on('log', gutil.log);
-}
+});
 
 gulp.task('babel', () =>
-    gulp.src('./src/**/*.js')
+    gulp.src(['src/**/*.js', '!src/client.js'])
+        .pipe(changed('./dist/'))
         .pipe(babel({
             presets: ['stage-0', 'react'],
             plugins: [
@@ -76,12 +78,12 @@ gulp.task('server', ['babel'], () => {
     nodemon({
         script: 'dist/server.js',
         ext: 'js',
-        ignore: ['dist/**/*'],
+        ignore: ['dist/**/*', 'src/client.js', 'Gulpfile.js'],
         tasks: ['babel'],
         env: {
             PORT: 5000,
             NODE_ENV: 'development',
-            BACKEND_URL: 'http://api.bogie.leops.me',
+            BACKEND_URL: 'http://localhost:8888',
             CDN_URL: 'http://localhost:3000'
         }
     });
@@ -90,8 +92,8 @@ gulp.task('server', ['babel'], () => {
 gulp.task('cdn', ['client'], () => {
     browserSync({
         proxy: 'localhost:5000',
-        serveStatic: ['./dist/assets']
+        serveStatic: ['./dist/assets', './']
     });
 });
 
-gulp.task('default', ['cdn', 'server']);
+gulp.task('default', ['cdn', 'server', 'watch']);

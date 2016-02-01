@@ -4,11 +4,10 @@ import {
     createLocation
 } from 'history';
 import {
-    match,
-    RoutingContext
+    match
 } from 'react-router';
 
-import IsomorphicRelay from 'isomorphic-relay';
+import IsomorphicRouter from 'isomorphic-relay-router';
 import Relay from 'react-relay';
 import RelayStoreData from 'react-relay/lib/RelayStoreData';
 
@@ -53,43 +52,13 @@ export default (req, res) => {
             console.error(error.stack);
             res.status(500).send(error.message);
         } else if (redirectLocation) {
-            res.redirect(302,
-                redirectLocation.pathname + redirectLocation.search
-            );
+            res.redirect(302, redirectLocation.pathname + redirectLocation.search);
         } else if (renderProps) {
-            const relayComponent = renderProps.components.find(
-                component => component && component.containerProps
-            );
-
-            (() => {
-                if (relayComponent) {
-                    const {
-                        containerProps: {Component, RouteClass}
-                    } = relayComponent;
-
-                    return IsomorphicRelay.prepareData({
-                        Component,
-                        route: new RouteClass({
-                            token: req.cookies.token
-                        })
-                    }).then(data => {
-                        const reactOutput = ReactDOMServer.renderToString(
-                            <RoutingContext {...renderProps} />
-                        );
-
-                        return `
-                            <main class="ui container">${reactOutput}</main>
-                            <script id="preloadedData" type="application/json">${JSON.stringify(data)}</script>
-                        `;
-                    });
-                }
-
+            IsomorphicRouter.prepareData(renderProps).then(data => {
                 const reactOutput = ReactDOMServer.renderToString(
-                    <RoutingContext {...renderProps} />
+                    <IsomorphicRouter.RouterContext {...renderProps} />
                 );
 
-                return Promise.resolve(`<main class="ui container">${reactOutput}</main>`);
-            })().then(body => {
                 res.status(200).send(`
                     <!DOCTYPE html>
                     <html>
@@ -100,7 +69,8 @@ export default (req, res) => {
                             <link rel="stylesheet" href="${process.env.CDN_URL}/bundle.css">
                         </head>
                         <body>
-                            ${body}
+                            <main class="ui container">${reactOutput}</main>
+                            <script id="preloadedData" type="application/json">${JSON.stringify(data)}</script>
                             <script src="${process.env.CDN_URL}/bundle.js"></script>
                         </body>
                     </html>
@@ -110,7 +80,7 @@ export default (req, res) => {
                 res.status(500).send(err.message);
             });
         } else {
-            res.status(404).send('Not found');
+            res.status(404).send('Not Found');
         }
     });
 };
