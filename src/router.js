@@ -15,7 +15,7 @@ import RegisterForm from './components/registerForm';
 export default createRoutes(
     <RelayRouter>
         <Route path="/" component={TrainList} queries={ListQueries} onEnter={({location}, replace) => {
-            if (!location.state.token) {
+            if (!location.state.cookies.get('token')) {
                 replace({
                     ...location,
                     pathname: '/login'
@@ -24,5 +24,12 @@ export default createRoutes(
         }} stateParams={['token']} />
         <Route path="/login" component={LoginForm} />
         <Route path="/register" component={RegisterForm} />
+        <Route path="/logout" onEnter={({location}, replace) => {
+            location.state.cookies.remove('token');
+            replace({
+                ...location,
+                pathname: '/'
+            });
+        }} />
     </RelayRouter>
 );

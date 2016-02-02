@@ -11,7 +11,9 @@ import IsomorphicRouter from 'isomorphic-relay-router';
 import Relay from 'react-relay';
 import RelayStoreData from 'react-relay/lib/RelayStoreData';
 
-import router from './router';
+import cookieDough from 'cookie-dough';
+
+import routes from './router';
 
 class ServerNetworkLayer extends Relay.DefaultNetworkLayer {
     getLayer(token) {
@@ -44,17 +46,17 @@ RelayStoreData.getDefaultInstance().getChangeEmitter().injectBatchingStrategy(()
 export default (req, res) => {
     match({
         location: createLocation(req.url, {
-            token: req.cookies.token
+            cookies: cookieDough(req)
         }),
-        routes: router
-    }, (error, redirectLocation, renderProps) => {
-        if (error) {
-            console.error(error.stack);
-            res.status(500).send(error.message);
-        } else if (redirectLocation) {
-            res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-        } else if (renderProps) {
-            IsomorphicRouter.prepareData(renderProps).then(data => {
+        routes
+    }, async (error, redirectLocation, renderProps) => {
+        try {
+            if (error) {
+                throw error;
+            } else if (redirectLocation) {
+                res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+            } else if (renderProps) {
+                const data = await IsomorphicRouter.prepareData(renderProps);
                 const reactOutput = ReactDOMServer.renderToString(
                     <IsomorphicRouter.RouterContext {...renderProps} />
                 );
@@ -75,12 +77,12 @@ export default (req, res) => {
                         </body>
                     </html>
                 `);
-            }).catch(err => {
-                console.error(err.stack);
-                res.status(500).send(err.message);
-            });
-        } else {
-            res.status(404).send('Not Found');
+            } else {
+                res.status(404).send('Not Found');
+            }
+        } catch (err) {
+            console.error(err.stack);
+            res.status(500).send(err.message);
         }
     });
 };

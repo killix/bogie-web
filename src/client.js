@@ -8,9 +8,18 @@ import IsomorphicRouter from 'isomorphic-relay-router';
 import IsomorphicRelay from 'isomorphic-relay';
 import Relay from 'react-relay';
 
+import cookieDough from 'cookie-dough';
+
 import router from './router';
 
-const token = decodeURIComponent(document.cookie.replace(/(?:(?:^|.*;)\s*token\s*\=\s*([^;]*).*$)|^.*$/, '$1'));
+const cookies = cookieDough();
+browserHistory.replace({
+    state: {
+        cookies
+    }
+});
+
+const token = cookies.get('token');
 if (token) {
     Relay.injectNetworkLayer(
         new Relay.DefaultNetworkLayer(`${process.env.BACKEND_URL}/graphql`, {
@@ -19,12 +28,6 @@ if (token) {
             }
         })
     );
-
-    browserHistory.replace({
-        state: {
-            token
-        }
-    });
 }
 
 const data = JSON.parse(document.getElementById('preloadedData').textContent);
